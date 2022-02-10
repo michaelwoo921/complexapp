@@ -12,7 +12,7 @@ const register = function (req, res) {
 
 const login = function (req, res) {
   const user = new User(req.body);
-  user.login();
+  user.login(console.log);
   res.send('trying to login');
 };
 

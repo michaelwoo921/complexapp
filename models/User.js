@@ -1,6 +1,6 @@
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
-const usersCollection = require('../db').collection('users');
+const usersCollection = require('../db').db().collection('users');
 
 const User = function (data) {
   this.data = data;
@@ -77,8 +77,21 @@ User.prototype.register = function () {
   }
 };
 
-User.prototype.login = function () {
-  console.log(this.data);
+User.prototype.login = function (callback) {
+  this.cleanUp();
+  usersCollection
+    .findOne({ username: this.data.username })
+    .then((attemptedUser) => {
+      if (
+        attemptedUser &&
+        bcrypt.compareSync(this.data.password, attemptedUser.password)
+      ) {
+        callback('congrats ..');
+      } else {
+        callback('invalid username/password');
+      }
+    })
+    .catch(() => callback('please try again later'));
 };
 
 module.exports = User;
