@@ -2,12 +2,23 @@ const User = require('../models/User');
 
 const register = function (req, res) {
   const user = new User(req.body);
-  user.register();
-  if (user.errors.length > 0) {
-    res.send(user.errors);
-  } else {
-    res.send('Congrats, there are no errors');
-  }
+  user
+    .register()
+    .then(() => {
+      req.session.user = {
+        username: user.data.username,
+        avatar: user.avatar,
+      };
+      req.session.save(function () {
+        res.redirect('/');
+      });
+    })
+    .catch((regErrors) => {
+      regErrors.forEach((error) => req.flash('regErrors', error));
+      req.session.save(function () {
+        res.redirect('/');
+      });
+    });
 };
 
 const login = function (req, res) {
@@ -15,7 +26,10 @@ const login = function (req, res) {
   user
     .login()
     .then((result) => {
-      req.session.user = { username: user.data.username, favColor: 'blue' };
+      req.session.user = {
+        username: user.data.username,
+        avatar: user.avatar,
+      };
       req.session.save(() => {
         res.redirect('/');
       });
@@ -37,9 +51,15 @@ const logout = function (req, res) {
 const home = function (req, res) {
   if (req.session.user) {
     console.log(req.session.user);
-    res.render('home-dashboard', { username: req.session.user.username });
+    res.render('home-dashboard', {
+      username: req.session.user.username,
+      avatar: req.session.user.avatar,
+    });
   } else {
-    res.render('home-guest', { errors: req.flash('errors') });
+    res.render('home-guest', {
+      errors: req.flash('errors'),
+      regErrors: req.flash('regErrors'),
+    });
   }
 };
 
