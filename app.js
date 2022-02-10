@@ -18,6 +18,11 @@ const sessionOptions = session({
 
 app.use(sessionOptions);
 app.use(flash());
+// session user available to views
+app.use(function (req, res, next) {
+  res.locals.user = req.session.user;
+  next();
+});
 
 // set template engine
 app.set('views', 'views');
