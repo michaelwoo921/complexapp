@@ -13,5 +13,6 @@ router.post('/logout', userCtrl.logout);
 // post related routes
 router.get('/create-post', userCtrl.mustBeLoggedIn, postCtrl.viewCreateScreen);
 router.post('/create-post', userCtrl.mustBeLoggedIn, postCtrl.create);
+router.get('/post/:id', postCtrl.viewSingle);
 
 module.exports = router;

@@ -17,3 +17,13 @@ exports.create = function (req, res) {
       res.send(errors);
     });
 };
+
+exports.viewSingle = async function (req, res) {
+  try {
+    const post = await Post.findSingleById(req.params.id);
+    console.log(post);
+    res.render('single-post-screen', { post: post });
+  } catch {
+    res.render('404');
+  }
+};
