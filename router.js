@@ -7,5 +7,5 @@ router.get('/', userCtrl.home);
 
 router.post('/login', userCtrl.login);
 router.post('/register', userCtrl.register);
-
+router.post('/logout', userCtrl.logout);
 module.exports = router;

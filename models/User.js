@@ -77,21 +77,23 @@ User.prototype.register = function () {
   }
 };
 
-User.prototype.login = function (callback) {
-  this.cleanUp();
-  usersCollection
-    .findOne({ username: this.data.username })
-    .then((attemptedUser) => {
-      if (
-        attemptedUser &&
-        bcrypt.compareSync(this.data.password, attemptedUser.password)
-      ) {
-        callback('congrats ..');
-      } else {
-        callback('invalid username/password');
-      }
-    })
-    .catch(() => callback('please try again later'));
+User.prototype.login = function () {
+  return new Promise((resolve, reject) => {
+    this.cleanUp();
+    usersCollection
+      .findOne({ username: this.data.username })
+      .then((attemptedUser) => {
+        if (
+          attemptedUser &&
+          bcrypt.compareSync(this.data.password, attemptedUser.password)
+        ) {
+          resolve('congrats ..');
+        } else {
+          reject('invalid username/password');
+        }
+      })
+      .catch(() => reject('please try again later'));
+  });
 };
 
 module.exports = User;
