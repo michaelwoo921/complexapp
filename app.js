@@ -18,8 +18,19 @@ const sessionOptions = session({
 
 app.use(sessionOptions);
 app.use(flash());
-// session user available to views
 app.use(function (req, res, next) {
+  // make all errors flash message available
+  res.locals.errors = req.flash('errors');
+  res.locals.success = req.flash('success');
+
+  // make current user id available on the req object
+  if (req.session.user) {
+    req.visitorId = req.session.user._id;
+  } else {
+    req.visitorId = 0;
+  }
+
+  // session user available to views
   res.locals.user = req.session.user;
   next();
 });
