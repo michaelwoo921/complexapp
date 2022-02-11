@@ -1,6 +1,7 @@
 const User = require('../models/User');
+const Post = require('../models/Post');
 
-const mustBeLoggedIn = function (req, res, next) {
+exports.mustBeLoggedIn = function (req, res, next) {
   if (req.session.user) {
     next();
   } else {
@@ -8,7 +9,7 @@ const mustBeLoggedIn = function (req, res, next) {
     req.session.save(() => res.redirect('/'));
   }
 };
-const register = function (req, res) {
+exports.register = function (req, res) {
   const user = new User(req.body);
   user
     .register()
@@ -30,7 +31,7 @@ const register = function (req, res) {
     });
 };
 
-const login = function (req, res) {
+exports.login = function (req, res) {
   const user = new User(req.body);
   user
     .login()
@@ -52,13 +53,13 @@ const login = function (req, res) {
     });
 };
 
-const logout = function (req, res) {
+exports.logout = function (req, res) {
   req.session.destroy(function () {
     res.redirect('/');
   });
 };
 
-const home = function (req, res) {
+exports.home = function (req, res) {
   if (req.session.user) {
     res.render('home-dashboard');
   } else {
@@ -69,4 +70,27 @@ const home = function (req, res) {
   }
 };
 
-module.exports = { register, login, logout, home, mustBeLoggedIn };
+exports.ifUserExists = function (req, res, next) {
+  User.findByUsername(req.params.username)
+    .then(function (userDocument) {
+      req.profileUser = userDocument;
+      next();
+    })
+    .catch(function () {
+      res.render('404');
+    });
+};
+
+exports.profilePostsScreen = function (req, res) {
+  //
+  Post.findByAuthorId(req.profileUser._id)
+    .then((posts) => {
+      console.log('****', posts, req.profileUser);
+      res.render('profile', {
+        posts: posts,
+        profileUsername: req.profileUser.username,
+        profileAvatar: req.profileUser.avatar,
+      });
+    })
+    .catch(() => res.render('404'));
+};
