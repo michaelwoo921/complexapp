@@ -21,7 +21,7 @@ router.get(
 router.get('/create-post', userCtrl.mustBeLoggedIn, postCtrl.viewCreateScreen);
 router.post('/create-post', userCtrl.mustBeLoggedIn, postCtrl.create);
 router.get('/post/:id', postCtrl.viewSingle);
-router.get('/post/:id/edit', postCtrl.viewEditScreen);
-router.post('/post/:id/edit', postCtrl.edit);
-
+router.get('/post/:id/edit', userCtrl.mustBeLoggedIn, postCtrl.viewEditScreen);
+router.post('/post/:id/edit', userCtrl.mustBeLoggedIn, postCtrl.edit);
+router.post('/post/:id/delete', userCtrl.mustBeLoggedIn, postCtrl.delete);
 module.exports = router;

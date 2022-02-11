@@ -1,5 +1,6 @@
 const postsCollection = require('../db').db().collection('posts');
 const ObjectId = require('mongodb').ObjectId;
+const sanitizeHTML = require('sanitize-html');
 const User = require('./User');
 
 let Post = function (data, userid, requestedPostId) {
@@ -19,8 +20,14 @@ Post.prototype.cleanUp = function () {
 
   // get rid of any bogus properties
   this.data = {
-    title: this.data.title.trim(),
-    body: this.data.body.trim(),
+    title: sanitizeHTML(this.data.title.trim(), {
+      allowedTags: [],
+      allowedAttributes: {},
+    }),
+    body: sanitizeHTML(this.data.body.trim(), {
+      allowedTags: [],
+      allowedAttributes: {},
+    }),
     createdDate: new Date(),
     author: ObjectId(this.userid),
   };
@@ -43,8 +50,8 @@ Post.prototype.create = function () {
       // save post into database
       postsCollection
         .insertOne(this.data)
-        .then(() => {
-          resolve();
+        .then((info) => {
+          resolve(info.insertedId);
         })
         .catch(() => {
           this.errors.push('Please try again later.');
@@ -156,6 +163,22 @@ Post.findByAuthorId = function (authorId) {
     { $match: { author: authorId } },
     { $sort: { createdDate: -1 } },
   ]);
+};
+
+Post.delete = function (postIdToDelete, currentUserId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let post = await Post.findSingleById(postIdToDelete, currentUserId);
+      if (post.isVisitorOwner) {
+        await postsCollection.deleteOne({ _id: new ObjectId(postIdToDelete) });
+        resolve();
+      } else {
+        reject();
+      }
+    } catch {
+      reject();
+    }
+  });
 };
 
 module.exports = Post;
