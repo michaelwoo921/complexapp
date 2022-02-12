@@ -4,6 +4,8 @@
   <%- include('includes/flash') %>
   <div class="d-flex justify-content-between">
     <h2><%= post.title %></h2>
+
+    <% if(post.isVisitorOwner){ %>
     <span class="pt-2">
       <a
         href="/post/<%= post._id %>/edit"
@@ -28,10 +30,13 @@
         </button>
       </form>
     </span>
+    <% } %>
   </div>
 
   <p class="text-muted small mb-4">
-    <a href="#"><img class="avatar-tiny" src="<%= post.author.avatar %>" /></a>
+    <a href="/profile/<%= post.author.username %>"
+      ><img class="avatar-tiny" src="<%= post.author.avatar %>"
+    /></a>
     Posted by
     <a href="/profile/<%= post.author.username %>">
       <%= post.author.username %></a
