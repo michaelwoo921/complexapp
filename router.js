@@ -24,4 +24,6 @@ router.get('/post/:id', postCtrl.viewSingle);
 router.get('/post/:id/edit', userCtrl.mustBeLoggedIn, postCtrl.viewEditScreen);
 router.post('/post/:id/edit', userCtrl.mustBeLoggedIn, postCtrl.edit);
 router.post('/post/:id/delete', userCtrl.mustBeLoggedIn, postCtrl.delete);
+router.post('/search', postCtrl.search);
+
 module.exports = router;
