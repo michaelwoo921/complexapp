@@ -5,12 +5,19 @@ export default class Chat {
     this.openIcon = document.querySelector('.header-chat-icon');
 
     this.injectHTML();
+    this.chatField = document.querySelector('#chatField');
+    this.chatForm = document.querySelector('#chatForm');
     this.closeIcon = document.querySelector('.chat-title-bar-close');
     this.events();
   }
 
   // events
   events() {
+    this.chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.sendMessageToServer();
+      this.showChat();
+    });
     this.openIcon.addEventListener('click', () => {
       this.showChat();
     });
@@ -20,8 +27,18 @@ export default class Chat {
   }
 
   // methods
+  sendMessageToServer() {
+    this.socket.emit('chatMessageFromBrowser', {
+      message: this.chatField.value,
+    });
+    this.chatField.value = '';
+    this.chatField.focus();
+  }
   openConnection() {
-    alert('open connection');
+    this.socket = io();
+    this.socket.on('chatMessageFromServer', function (data) {
+      alert(data.message);
+    });
   }
 
   injectHTML() {
