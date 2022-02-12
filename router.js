@@ -18,6 +18,18 @@ router.get(
   userCtrl.sharedProfileData,
   userCtrl.profilePostsScreen
 );
+router.get(
+  '/profile/:username/followers',
+  userCtrl.ifUserExists,
+  userCtrl.sharedProfileData,
+  userCtrl.profileFollowersScreen
+);
+router.get(
+  '/profile/:username/following',
+  userCtrl.ifUserExists,
+  userCtrl.sharedProfileData,
+  userCtrl.profileFollowingScreen
+);
 
 // post related routes
 router.get('/create-post', userCtrl.mustBeLoggedIn, postCtrl.viewCreateScreen);
