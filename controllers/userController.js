@@ -18,8 +18,10 @@ exports.sharedProfileData = async function (req, res, next) {
   req.isFollowing = isFollowing;
   // retrieve post, follower, following count
   let postCountPromise = await Post.countPostsByAuthor(req.profileUser._id);
-  let followerCountPromise = await Post.countFollowersById(req.profileUser._id);
-  let followingCountPromise = await Post.countFollowingById(
+  let followerCountPromise = await Follow.countFollowersById(
+    req.profileUser._id
+  );
+  let followingCountPromise = await Follow.countFollowingById(
     req.profileUser._id
   );
   let [postCount, followerCount, followingCount] = await Promise.all([
@@ -92,9 +94,11 @@ exports.logout = function (req, res) {
   });
 };
 
-exports.home = function (req, res) {
+exports.home = async function (req, res) {
   if (req.session.user) {
-    res.render('home-dashboard');
+    // fetch feed of posts of current user
+    let posts = await Post.getFeed(req.session.user._id);
+    res.render('home-dashboard', { posts: posts });
   } else {
     res.render('home-guest', {
       regErrors: req.flash('regErrors'),
