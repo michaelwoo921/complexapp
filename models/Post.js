@@ -66,6 +66,8 @@ Post.prototype.create = function () {
 
 Post.prototype.update = function () {
   return new Promise(async (resolve, reject) => {
+    console.log('********************');
+
     try {
       let post = await Post.findSingleById(this.requestedPostId, this.userid);
       if (post.isVisitorOwner) {

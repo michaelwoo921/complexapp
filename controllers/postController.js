@@ -43,9 +43,10 @@ exports.viewSingle = async function (req, res) {
 };
 
 exports.viewEditScreen = async function (req, res) {
+  console.log('0');
   try {
-    let post = await Post.findSingleById(req.params.id);
-    if (post.authorId == req.visitorId) {
+    let post = await Post.findSingleById(req.params.id, req.visitorId);
+    if (post.isVisitorOwner) {
       res.render('edit-post', { post: post });
     } else {
       req.flash('errors', 'You do not have permission to perform that action');
@@ -63,7 +64,7 @@ exports.edit = function (req, res) {
     .update()
     .then((status) => {
       console.log(status);
-      console.log('0');
+
       if (status == 'success') {
         req.flash('success', 'Post successfully updated');
         req.session.save(() => res.redirect(`/post/${req.params.id}/edit`));
@@ -75,10 +76,10 @@ exports.edit = function (req, res) {
       }
     })
     .catch(() => {
-      console.log('1');
       // post with requestId does not exist or
       // current visitor is not the owner of the reuqested post
       req.flash('errors', 'You do not have permission to perform that action');
+
       req.session.save(() => res.redirect('/'));
     });
 };
