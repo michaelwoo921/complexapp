@@ -50,6 +50,7 @@ exports.edit = function (req, res) {
     .update()
     .then((status) => {
       console.log(status);
+      console.log('0');
       if (status == 'success') {
         req.flash('success', 'Post successfully updated');
         req.session.save(() => res.redirect(`/post/${req.params.id}/edit`));
@@ -61,6 +62,7 @@ exports.edit = function (req, res) {
       }
     })
     .catch(() => {
+      console.log('1');
       // post with requestId does not exist or
       // current visitor is not the owner of the reuqested post
       req.flash('errors', 'You do not have permission to perform that action');
