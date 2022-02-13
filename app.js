@@ -8,6 +8,11 @@ const express = require('express');
 const sanitizeHTML = require('sanitize-html');
 
 const app = express();
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use('/api', require('./router-api'));
+
 // use session
 const sessionOptions = session({
   secret: 'nevergiveup',
@@ -68,8 +73,6 @@ app.set('view engine', 'ejs');
 
 // serve static file and parse body
 app.use(express.static('public'));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 app.use(csrf());
 
