@@ -10,6 +10,8 @@ router.get('/', userCtrl.home);
 router.post('/login', userCtrl.login);
 router.post('/register', userCtrl.register);
 router.post('/logout', userCtrl.logout);
+router.post('/doesUsernameExist', userCtrl.doesUsernameExist);
+router.post('/doesEmailExist', userCtrl.doesEmailExist);
 
 // profile related routes
 router.get(
